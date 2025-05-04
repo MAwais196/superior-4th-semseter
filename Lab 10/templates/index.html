@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="chat-container">
+    <header class="chat-header">
+        <h1>University Admission Assistant</h1>
+        <p>Ask me about admission requirements, deadlines, programs, and more!</p>
+    </header>
+    
+    <div class="chat-messages" id="chat-messages">
+        <div class="message bot-message">
+            <div class="message-content">
+                {{ initial_message }}
+            </div>
+        </div>
+    </div>
+    
+    <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Type your question here...">
+        <button id="send-button">Send</button>
+    </div>
+    
+    <div class="suggested-questions">
+        <p>Try asking:</p>
+        <button class="suggestion-btn">What are the admission requirements?</button>
+        <button class="suggestion-btn">When is the application deadline?</button>
+        <button class="suggestion-btn">What programs do you offer?</button>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Send message when button is clicked
+    $('#send-button').click(sendMessage);
+    
+    // Send message when Enter key is pressed
+    $('#user-input').keypress(function(e) {
+        if (e.which == 13) {
+            sendMessage();
+        }
+    });
+    
+    // Suggested questions
+    $('.suggestion-btn').click(function() {
+        $('#user-input').val($(this).text());
+        sendMessage();
+    });
+    
+    function sendMessage() {
+        const userMessage = $('#user-input').val().trim();
+        if (userMessage) {
+            // Add user message to chat
+            addMessage(userMessage, 'user-message');
+            $('#user-input').val('');
+            
+            // Get bot response
+            $.post('/send_message', {message: userMessage}, function(data) {
+                addMessage(data.response, 'bot-message');
+            });
+        }
+    }
+    
+    function addMessage(message, messageClass) {
+        const messageElement = $('<div class="message"></div>').addClass(messageClass);
+        messageElement.html('<div class="message-content">' + message + '</div>');
+        $('#chat-messages').append(messageElement);
+        $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+    }
+});
+</script>
+{% endblock %}

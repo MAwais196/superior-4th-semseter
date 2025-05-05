@@ -1,0 +1,33 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwritten Digit Recognition</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Handwritten Digit Recognition</h1>
+        <p>Upload an image of a handwritten digit (0-9) and the system will predict what digit it is.</p>
+        
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required>
+            <button type="submit">Predict Digit</button>
+        </form>
+        
+        {% if prediction is not none %}
+        <div class="result">
+            <h2>Prediction Result</h2>
+            {% if filename %}
+            <div class="image-preview">
+                <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Uploaded digit">
+            </div>
+            {% endif %}
+            <p>The predicted digit is: <span class="prediction">{{ prediction }}</span></p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
